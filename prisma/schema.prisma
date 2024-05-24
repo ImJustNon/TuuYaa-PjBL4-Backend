@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("MYSQL_MAIN_URL")
+    shadowDatabaseUrl = env("MYSQL_SHADOW_URL")
+}
+
+model User {
+    id                      Int         @id @default(autoincrement())
+    user_uuid               String      @unique @default(uuid())
+    user_token              String      @unique @db.VarChar(255)
+    user_profile_url        String?     @default("https://upload-api-v2.vercel.app/api/v1/call/4039521653727833905836658")
+    user_name               String      @unique                 //
+    user_display_name       String      @default("New_User")
+    user_email              String      @unique                 //
+    user_password_hash      String      @db.VarChar(255)        //
+    create_at               DateTime    @default(now())
+	update_at               DateTime    @updatedAt
+    is_disabled             Boolean     @default(false)
+}
+
+model Box {
+    id              Int         @id @default(autoincrement())
+    box_uuid        String      @unique @default(uuid())
+    box_key         String      @unique                         //
+    box_slot_count  Int         @default(6)                     //
+    create_at       DateTime    @default(now())
+	update_at       DateTime    @updatedAt
+    is_disabled     Boolean     @default(false)
+}
+
+model RegisteredBox {
+    id          Int         @id @default(autoincrement())
+    box_uuid    String      @unique                             // box uuid
+    box_name    String                                          //
+    user_uuid   String                                          // 
+    create_at   DateTime    @default(now())
+	update_at   DateTime    @updatedAt
+    is_disabled Boolean     @default(false)
+}
+
+model AlertData {
+    id          Int         @id @default(autoincrement())
+    alert_uuid  String      @unique @default(uuid())
+    alert_name  String                                           //
+    alert_time  DateTime                                         //  
+    alert_slot  Json?                                            //
+    user_uuid   String                                           //
+    box_uuid    String                                           //
+    create_at   DateTime    @default(now())
+	update_at   DateTime    @updatedAt
+    is_disabled Boolean     @default(false)
+}
+
+model VerifyCode {
+    id              Int         @id @default(autoincrement())
+    verify_code     String                                       //
+    user_email      String                                       //
+    reference_code  String                                       //
+    create_at       DateTime    @default(now())
+	update_at       DateTime    @updatedAt
+    is_disabled     Boolean     @default(false)
+}
