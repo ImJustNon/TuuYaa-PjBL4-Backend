@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bodyparser = require("body-parser");
-const { UserNativeAuthController, UserNativeAuthCreateController } = require("../controllers/userNormalAuth_controller");
+const { UserNativeAuthController, UserNativeAuthCreateController } = require("../controllers/userNativeAuth_controller");
 const urlEncoded = bodyparser.urlencoded({
     limit: "50mb",
     extended: false,
