@@ -7,6 +7,7 @@ const path = require("path");
 const morgan = require("morgan");
 const http = require("http");
 const config = require("./config/config");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 const server = http.createServer(app);
@@ -21,6 +22,7 @@ const jsonEncoded = express.json({
 });
 
 app.use(cors());
+app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(urlEncoded);
 app.use(jsonEncoded);
