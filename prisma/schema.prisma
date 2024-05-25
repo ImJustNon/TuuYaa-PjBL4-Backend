@@ -25,23 +25,26 @@ model User {
     user_password_hash      String      @db.VarChar(255)        //
     create_at               DateTime    @default(now())
 	update_at               DateTime    @updatedAt
+    is_google               Boolean     @default(false)
+    user_google_id          String?
+    user_role               String      @default("user")
     is_disabled             Boolean     @default(false)
 }
 
-model GoogleUser {
-    id                      Int         @id @default(autoincrement())
-    user_google_id          String      @unique
-    user_uuid               String      @unique @default(uuid())
-    user_email_verified     Boolean     @default(false)
-    user_token              String      @unique 
-    user_profile_url        String?     
-    user_name               String      
-    user_display_name       String?
-    user_email              String      @unique
-    create_at               DateTime    @default(now())
-	update_at               DateTime    @updatedAt
-    is_disabled             Boolean     @default(false)
-}
+// model GoogleUser {
+//     id                      Int         @id @default(autoincrement())
+//     user_google_id          String      @unique
+//     user_uuid               String      @unique @default(uuid())
+//     user_email_verified     Boolean     @default(false)
+//     user_token              String      @unique 
+//     user_profile_url        String?     
+//     user_name               String      
+//     user_display_name       String?
+//     user_email              String      @unique
+//     create_at               DateTime    @default(now())
+// 	update_at               DateTime    @updatedAt
+//     is_disabled             Boolean     @default(false)
+// }
 
 model Box {
     id              Int         @id @default(autoincrement())

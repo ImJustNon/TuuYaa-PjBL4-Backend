@@ -50,7 +50,7 @@ async function UserNativeAuthCreateController(req, res){
         });
 
         const createJwtToken = await signJwt({
-            authToken: createNewUserToken
+            user_token: createNewUserToken
         });
 
         return res.json({
@@ -58,7 +58,7 @@ async function UserNativeAuthCreateController(req, res){
             message: "Create new user successful",
             error: null,
             data: {
-                authToken:  createJwtToken,
+                access_token:  createJwtToken,
                 create_at: createUser.create_at
             }
         });
@@ -110,6 +110,7 @@ async function UserNativeAuthController(req, res){
                 select: {
                     user_password_hash: true,
                     user_token: true,
+                    is_disabled: true,
                 }
             });
 
@@ -118,6 +119,14 @@ async function UserNativeAuthController(req, res){
                     status: "FAIL",
                     message: "User not found",
                     error: {},
+                });
+            }
+
+            if(findUserByEmail.is_disabled){
+                return res.json({
+                    status: "FAIL",
+                    message: "User disabled",
+                    error: {}
                 });
             }
 
@@ -132,7 +141,7 @@ async function UserNativeAuthController(req, res){
             }
 
             const createJwtToken = await signJwt({
-                authToken: findUserByEmail.user_token,
+                user_token: findUserByEmail.user_token,
             });
 
             return res.json({
@@ -140,7 +149,7 @@ async function UserNativeAuthController(req, res){
                 message: "Auth by Email and Password : PASS",
                 error: null,
                 data: {
-                    authToken: createJwtToken,
+                    access_token: createJwtToken,
                     query_at: new Date().toISOString(),
                 }
             });
@@ -163,6 +172,7 @@ async function UserNativeAuthController(req, res){
                 select: {
                     user_password_hash: true,
                     user_token: true,
+                    is_disabled: true,
                 }
             });
 
@@ -170,6 +180,14 @@ async function UserNativeAuthController(req, res){
                 return res.json({
                     status: "FAIL",
                     message: "User not found",
+                });
+            }
+
+            if(findUserByUserName.is_disabled){
+                return res.json({
+                    status: "FAIL",
+                    message: "User disabled",
+                    error: {}
                 });
             }
 
@@ -183,7 +201,7 @@ async function UserNativeAuthController(req, res){
             }
 
             const createJwtToken = await signJwt({
-                authToken: findUserByUserName.user_token,
+                user_token: findUserByUserName.user_token,
             });
 
             return res.json({
@@ -191,7 +209,7 @@ async function UserNativeAuthController(req, res){
                 message: "Auth by Username and Password : PASS",
                 error: null,
                 data: {
-                    authToken: createJwtToken,
+                    access_token: createJwtToken,
                     query_at: new Date().toISOString(),
                 }
             });

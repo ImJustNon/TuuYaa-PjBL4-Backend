@@ -52,27 +52,30 @@ async function UserGoogleAuthCallbackController(req, res){
         const userEmailVerified = user.verified_email;
         const userDisplayName = user.name;
 
-        const checkUser = await prisma.googleUser.count({
+        const checkAvailableEmail = await prisma.user.findUnique({
             where: {
                 user_email: userEmail,
             }
         });
-    
-        if(checkUser === 0){ // create
+
+        if(!checkAvailableEmail){ // no email match
+            //create new account
             const createUserToken = await createToken("google");
-            await prisma.googleUser.create({
+            const createEncryptPassword = await encryptPassword("default");
+            await prisma.user.create({
                 data: {
-                    user_google_id: userGoogleId,
-                    user_email_verified: userEmailVerified,
                     user_token: createUserToken,
                     user_profile_url: userProfileUrl,
                     user_name: userName,
                     user_display_name: userDisplayName,
-                    user_email: userEmail
+                    user_email: userEmail,
+                    user_password_hash: createEncryptPassword,
+                    is_google: true,
+                    user_google_id: userGoogleId
                 }
-            }).then(async value => {
+            }).then(async value =>{
                 const createJwtToken = await signJwt({
-                    authToken: value.user_token
+                    user_token: value.user_token
                 });
                 
                 return res.json({
@@ -80,7 +83,7 @@ async function UserGoogleAuthCallbackController(req, res){
                     message: "Create new Google User success",
                     error: null,
                     data: {
-                        authToken: createJwtToken,
+                        access_token: createJwtToken,
                         create_at: value.create_at
                     }
                 });
@@ -92,27 +95,56 @@ async function UserGoogleAuthCallbackController(req, res){
                 });
             });
         }
-        else { // get token
-            const findGoogleUserData = await prisma.googleUser.findFirst({
+        else { // have email match
+            // check disable account
+            const checkDisableUser = await prisma.user.findUnique({
                 where: {
                     user_email: userEmail,
-                    user_google_id: userGoogleId
                 },
                 select: {
-                    user_token: true,
+                    is_disabled: true,
+                }
+            });
+            if(checkDisableUser.is_disabled){
+                return res.json({
+                    status: "FAIL",
+                    message: "user disabled",
+                    error: {}
+                });
+            }
+            // update for use google login
+            if(!checkAvailableEmail.is_google){
+                await prisma.user.update({
+                    data: {
+                        is_google: true,
+                        user_google_id: userGoogleId
+                    },
+                    where: {
+                        user_email: userEmail
+                    }
+                });
+            }     
+            const findUserData = await prisma.user.findUnique({
+                where: {
+                    is_google: true,
+                    user_email: userEmail,
+                    user_google_id: userGoogleId,
+                },
+                select: {
+                    user_token: true
                 }
             });
 
-            if(!findGoogleUserData){
+            if(!findUserData){
                 return res.json({
                     status: "FAIL",
-                    message: "Google User not found",
+                    message: "User not found",
                     error: {}
                 });
             }
 
             const createJwtToken = await signJwt({
-                authToken: findGoogleUserData.user_token
+                user_token: findUserData.user_token
             });
 
             return res.json({
@@ -120,7 +152,7 @@ async function UserGoogleAuthCallbackController(req, res){
                 message: "Google User found",
                 error: null,
                 data: {
-                    authToken: createJwtToken,
+                    access_token: createJwtToken,
                     query_at: new Date().toISOString()
                 }
             });
