@@ -27,7 +27,7 @@ app.use(jsonEncoded);
 
 
 // api routes loader
-fs.readdirSync(path.join(__dirname, "/routes")).filter(fileName => fileName.endsWith("_route.js")).forEach((routeFile) =>{
+fs.readdirSync(path.join(__dirname, "/routes")).filter(fileName => fileName.endsWith("_route.js") && !fileName.startsWith("old_")).forEach((routeFile) =>{
     try {
         const router = require(`./routes/${routeFile}`);
         app.use("/api", router);

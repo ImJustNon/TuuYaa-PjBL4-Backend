@@ -14,21 +14,33 @@ datasource db {
     shadowDatabaseUrl = env("MYSQL_SHADOW_URL")
 }
 
+// model User {
+//     id                      Int         @id @default(autoincrement())
+//     user_uuid               String      @unique @default(uuid())
+//     user_token              String      @unique @db.VarChar(255)
+//     user_profile_url        String?     @default("https://upload-api-v2.vercel.app/api/v1/call/4039521653727833905836658")
+//     user_name               String      @unique                 //
+//     user_display_name       String      @default("New_User")
+//     user_email              String      @unique                 //
+//     user_password_hash      String      @db.VarChar(255)        //
+//     create_at               DateTime    @default(now())
+// 	update_at               DateTime    @updatedAt
+//     is_google               Boolean     @default(false)
+//     user_google_id          String?
+//     user_role               String      @default("user")
+//     is_disabled             Boolean     @default(false)
+// }
+
 model User {
-    id                      Int         @id @default(autoincrement())
-    user_uuid               String      @unique @default(uuid())
-    user_token              String      @unique @db.VarChar(255)
-    user_profile_url        String?     @default("https://upload-api-v2.vercel.app/api/v1/call/4039521653727833905836658")
-    user_name               String      @unique                 //
-    user_display_name       String      @default("New_User")
-    user_email              String      @unique                 //
-    user_password_hash      String      @db.VarChar(255)        //
-    create_at               DateTime    @default(now())
-	update_at               DateTime    @updatedAt
-    is_google               Boolean     @default(false)
-    user_google_id          String?
-    user_role               String      @default("user")
-    is_disabled             Boolean     @default(false)
+    id                  Int         @id @default(autoincrement())
+    user_uuid           String      @unique @default(uuid())
+    user_email          String
+    user_profile_url    String?     @default("https://upload-api-v2.vercel.app/api/v1/call/4039521653727833905836658")
+    user_name           String
+    user_google_id      String
+    is_disable          Boolean     @default(false)
+    create_at           DateTime    @default(now())
+    update_at           DateTime    @updatedAt
 }
 
 // model GoogleUser {
