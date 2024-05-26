@@ -85,14 +85,7 @@ async function AlertCreateController(req, res){
 
         // Pass
 
-        const createISOTimeString = convertDateObjToISOString({
-            day: 26,
-            month: 5,
-            year: 2024,
-            hour: 3,
-            minute: 30,
-            ampm: 'PM'
-        });
+        const createISOTimeString = convertDateObjToISOString(alertTime);
         const createSlotSet = [...new Set(alertSlot)];
         const createNewAlert = await prisma.alertData.create({
             data: {
