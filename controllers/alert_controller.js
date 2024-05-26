@@ -5,15 +5,16 @@ const config = require("../config/config");
 const axios = require("axios");
 const { getJwtFromBearerHeader } = require("../utils/getJwtFromBearerHeader");
 const { verifyJwt } = require("../utils/verifyJwt");
+const { convertDateObjToISOString } = require("../utils/convertDateObjToISOString");
 
 async function AlertCreateController(req, res){
     const { alertTime, boxUUID, alertSlot, alertName } = req.body ?? {}
-    const getJwt = await getJwtFromBearerHeader(req);
+    const { token } = req.cookies ?? {};
     
-    if(!getJwt){
+    if(!token){
         return res.json({
             status: "FAIL",
-            message: "Require AccessToken",
+            message: "Require token",
             error: {},
         });  
     }
@@ -27,7 +28,7 @@ async function AlertCreateController(req, res){
     }
 
     // parseJwtToRealData
-    const getTokenFronJwt = await verifyJwt(getJwt);
+    const getTokenFronJwt = await verifyJwt(token);
     if(!getTokenFronJwt){
         return res.json({
             status: "FAIL",
@@ -40,11 +41,10 @@ async function AlertCreateController(req, res){
     try {
         const getUserData = await prisma.user.findUnique({
             where: {
-                user_token: getTokenFronJwt.user_token
+                user_uuid: getTokenFronJwt.uuid
             },
             select: {
                 user_uuid: true,
-                is_disabled: true,
             }
         });
 
@@ -56,16 +56,72 @@ async function AlertCreateController(req, res){
             });
         }
 
-        if(getUserData.is_disabled){
+        // สำหรับเช็คเข้าของกล่องจริงหรือไม่
+        const getBoxData = await prisma.registeredBox.findUnique({
+            where: {
+                box_uuid: boxUUID
+            },
+            select: {
+                user_uuid: true,
+                box_uuid: true
+            }
+        });
+
+        if(!getBoxData){
             return res.json({
                 status: "FAIL",
-                message: "User disabled",
+                message: "Box not found",
                 error: {}
             });
         }
 
+        if(getBoxData.user_uuid !== getTokenFronJwt.uuid){
+            return res.json({
+                status: "FAIL",
+                message: "This box not your",
+                error: {}
+            });
+        }
+
+        // Pass
+
+        const createISOTimeString = convertDateObjToISOString({
+            day: 26,
+            month: 5,
+            year: 2024,
+            hour: 3,
+            minute: 30,
+            ampm: 'PM'
+        });
+        const createSlotSet = [...new Set(alertSlot)];
+        const createNewAlert = await prisma.alertData.create({
+            data: {
+                alert_name: alertName,
+                alert_time: createISOTimeString,
+                alert_slot: createSlotSet,
+                user_uuid: getUserData.user_uuid,
+                box_uuid: getBoxData.box_uuid,
+            },
+            select: {
+                alert_uuid: true,
+                alert_name: true,
+                alert_time: true,
+                alert_slot: true,
+                create_at: true
+            }
+        });
+
+        return res.json({
+            status: "OK",
+            message: "Create new alert success",
+            error: null,
+            data: {
+                ...createNewAlert
+            }
+        });
+
         // code goes here
-        return res.json(getUserData);
+        // return res.json(getUserData);
     }
     catch(e) {
         return res.json({
