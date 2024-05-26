@@ -47,114 +47,63 @@ async function UserGoogleAuthCallbackController(req, res){
         const user = userResponse.data;
         const userEmail = user.email;
         const userProfileUrl = user.picture;
-        const userName = user.given_name;
+        const userName = user.name;
         const userGoogleId = user.id;
         const userEmailVerified = user.verified_email;
-        const userDisplayName = user.name;
+        // const userDisplayName = user.name;
 
         const checkAvailableEmail = await prisma.user.findUnique({
             where: {
                 user_email: userEmail,
+            },
+            select: {
+                user_uuid: true
             }
         });
 
         if(!checkAvailableEmail){ // no email match
             //create new account
-            const createUserToken = await createToken("google");
-            const createEncryptPassword = await encryptPassword("default");
-            await prisma.user.create({
+            const createNewUser = await prisma.user.create({
                 data: {
-                    user_token: createUserToken,
+                    user_email: userEmail,
                     user_profile_url: userProfileUrl,
                     user_name: userName,
-                    user_display_name: userDisplayName,
-                    user_email: userEmail,
-                    user_password_hash: createEncryptPassword,
-                    is_google: true,
-                    user_google_id: userGoogleId
+                    user_google_id: userGoogleId,
+                    user_google_verified: userEmailVerified
                 }
-            }).then(async value =>{
-                const createJwtToken = await signJwt({
-                    user_token: value.user_token
-                });
-                
-                return res.json({
-                    status: "OK",
-                    message: "Create new Google User success",
-                    error: null,
-                    data: {
-                        access_token: createJwtToken,
-                        create_at: value.create_at
-                    }
-                });
-            }).catch(e =>{
-                return res.json({
-                    status: "FAIL",
-                    message: "Cannot create new Google User",
-                    error: e
-                });
+            })
+            const createJwtToken = await signJwt({
+                uuid: createNewUser.user_uuid
+            });
+
+            // save cookie and response
+            res.cookie("token", createJwtToken, {
+                maxAge: (5 * 60) * 1000, // 5 min
+                secure: true, 
+                httpOnly: true,
+                sameSite: "none"
+            });
+            res.json({
+                status: "OK",
+                message: "Google User : Create new & Save Cookie success",
+                error: null,
             });
         }
         else { // have email match
-            // check disable account
-            const checkDisableUser = await prisma.user.findUnique({
-                where: {
-                    user_email: userEmail,
-                },
-                select: {
-                    is_disabled: true,
-                }
-            });
-            if(checkDisableUser.is_disabled){
-                return res.json({
-                    status: "FAIL",
-                    message: "user disabled",
-                    error: {}
-                });
-            }
-            // update for use google login
-            if(!checkAvailableEmail.is_google){
-                await prisma.user.update({
-                    data: {
-                        is_google: true,
-                        user_google_id: userGoogleId
-                    },
-                    where: {
-                        user_email: userEmail
-                    }
-                });
-            }     
-            const findUserData = await prisma.user.findUnique({
-                where: {
-                    is_google: true,
-                    user_email: userEmail,
-                    user_google_id: userGoogleId,
-                },
-                select: {
-                    user_token: true
-                }
-            });
-
-            if(!findUserData){
-                return res.json({
-                    status: "FAIL",
-                    message: "User not found",
-                    error: {}
-                });
-            }
-
             const createJwtToken = await signJwt({
-                user_token: findUserData.user_token
+                uuid: checkAvailableEmail.user_uuid
             });
-
-            return res.json({
+            // save cookie and response
+            res.cookie("token", createJwtToken, {
+                maxAge: (5 * 60) * 1000, // 5 min
+                secure: true, 
+                httpOnly: true,
+                sameSite: "none"
+            });
+            res.json({
                 status: "OK",
-                message: "Google User found",
+                message: "Google User : Login Success",
                 error: null,
-                data: {
-                    access_token: createJwtToken,
-                    query_at: new Date().toISOString()
-                }
             });
         }
     }

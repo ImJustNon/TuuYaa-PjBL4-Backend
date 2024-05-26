@@ -2,16 +2,14 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-	const testAddUser = await prisma.user.create({
+	const createBoxData = await prisma.box.create({
 		data: {
-			user_name: "non",
-			user_email: "kanakornthaiprakhon@gmail.com",
-			user_password_hash: "dghsdhsdgsdgdsfg",
-			user_token: "asdaldskfsdfgsdfgkjsldfkgjs;dlfkgjsld;hsdlkjfghlkdjsfhjhaskdjlhakdsjlhdskjj"
+			box_key: "nonlnwza",
+			box_slot_count: 6,
 		}
 	});
 
-	console.log(testAddUser);
+	console.log(createBoxData);
 
 
 }
