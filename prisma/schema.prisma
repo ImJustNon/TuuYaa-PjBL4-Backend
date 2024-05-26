@@ -37,6 +37,7 @@ model User {
     user_email              String      @unique
     user_profile_url        String?     @default("https://upload-api-v2.vercel.app/api/v1/call/4039521653727833905836658")
     user_name               String
+    user_role               String      @default("user")
     user_google_id          String      @unique
     user_google_verified    Boolean
     create_at               DateTime    @default(now())

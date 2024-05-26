@@ -68,6 +68,7 @@ async function UserGoogleAuthCallbackController(req, res){
                     user_email: userEmail,
                     user_profile_url: userProfileUrl,
                     user_name: userName,
+                    user_role: "user",
                     user_google_id: userGoogleId,
                     user_google_verified: userEmailVerified
                 }
