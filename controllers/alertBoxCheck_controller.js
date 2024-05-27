@@ -69,7 +69,7 @@ async function AlertBoxCheckController(req, res){
                 id: timeData.id,
                 alert_time: makeLikeISOStringFormatInUTC7,
                 alert_timeStamp: moment(makeLikeISOStringFormatInUTC7).valueOf(),
-                utc: "+07:00"
+                utc: makeLikeISOStringFormatInUTC7.match(/([+-]\d{2}:\d{2})$/)[0]
             }
         });
 
