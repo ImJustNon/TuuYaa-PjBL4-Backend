@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bodyparser = require("body-parser");
-const { AlertCreateController } = require("../controllers/alert_controller");
+const { AlertCreateController } = require("../controllers/alertCreate_controller");
 const { PrismaClient } = require("@prisma/client");
 const { signJwt } = require("../utils/signJwt");
 const prisma = new PrismaClient();
