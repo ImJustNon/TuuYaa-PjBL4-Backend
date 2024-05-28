@@ -6,6 +6,7 @@ const axios = require("axios");
 const { getJwtFromBearerHeader } = require("../utils/getJwtFromBearerHeader");
 const { verifyJwt } = require("../utils/verifyJwt");
 const { convertDateObjToISOString } = require("../utils/convertDateObjToISOString");
+const { isValidDate } = require("../utils/isValidDate");
 
 async function AlertCreateController(req, res){
     const { alertTime, boxUUID, alertSlot, alertName } = req.body ?? {}
@@ -26,6 +27,17 @@ async function AlertCreateController(req, res){
             error: {}
         });
     }
+
+    // validate date for correnting form
+    const [validateDate, validateDateError] = isValidDate(alertTime);
+    if(!validateDate){
+        return res.json({
+            status: "FAIL",
+            message: "Date data is not valid",
+            error: validateDateError
+        });
+    }
+
 
     // parseJwtToRealData
     const getTokenFronJwt = await verifyJwt(token);

@@ -54,7 +54,7 @@ async function AlertBoxCheckController(req, res){
         });
 
         // เพิ่ม 2 วันไม่รู้ว่าทำไม่บน ESP32 เวลามันช้าไป 2 วัน
-        const add2DaysBeforeConvert = momentTz(parseInt(currentTime) * 1000).add("2", "days");
+        const add2DaysBeforeConvert = moment(parseInt(currentTime) * 1000);//.add("2", "days");
         // เเปลงเวลาที่ได้มาจาก ESP32 จาก UTC เป๋น UTC+7
         const makeCurrentTimeToUTC7 = (currentTimeData) => {
             const utcDate = new Date(parseInt(currentTimeData.valueOf()));
