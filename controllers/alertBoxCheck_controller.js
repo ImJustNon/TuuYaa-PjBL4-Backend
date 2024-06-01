@@ -56,17 +56,18 @@ async function AlertBoxCheckController(req, res){
         // เพิ่ม 2 วันไม่รู้ว่าทำไม่บน ESP32 เวลามันช้าไป 2 วัน
         const add2DaysBeforeConvert = moment(parseInt(currentTime) * 1000);//.add("2", "days");
         // เเปลงเวลาที่ได้มาจาก ESP32 จาก UTC เป๋น UTC+7
-        const makeCurrentTimeToUTC7 = (currentTimeData) => {
+        const makeCurrentTimeToUTC7 = async (currentTimeData) => {
             const utcDate = new Date(parseInt(currentTimeData.valueOf()));
             const options = { timeZone: 'Asia/Bangkok', hour12: false };
             const dateInUTC7 = utcDate.toLocaleString('en-US', options).replace(', ', 'T');
             const [datePart, timePart] = dateInUTC7.split('T');
             const splitDatePart = datePart.split("/");
-            const makeLikeISOStringFormatInUTC7 = `${splitDatePart[2]}-${splitDatePart[0].length === 1 ? `0${splitDatePart[0]}` : splitDatePart[0]}-${splitDatePart[1]}T${timePart}.000+07:00`;
+            const splitTimePart = timePart.split(":");
+            const makeLikeISOStringFormatInUTC7 = `${splitDatePart[2]}-${splitDatePart[0].length === 1 ? `0${splitDatePart[0]}` : splitDatePart[0]}-${splitDatePart[1].length === 1 ? `0${splitDatePart[1]}` : splitDatePart[1]}T${splitTimePart[0].length === 1 ? `0${splitTimePart[0]}` : splitTimePart[0]}:${splitTimePart[1]}:${splitTimePart[2]}.000+07:00`;
             return (makeLikeISOStringFormatInUTC7);
         }
         // เเปลงเป็น ISOString
-        const convertCurrentTimeToISOString = makeCurrentTimeToUTC7(add2DaysBeforeConvert);
+        const convertCurrentTimeToISOString = await makeCurrentTimeToUTC7(add2DaysBeforeConvert);
         // เรียงเวลาจากน้อยไปมากโดยเเปลง isoStrig เป็นเลข Timestamp ก่อนเเละจึงมาเปลี่ยบเทียบ
         const sortAlertDatas = findAlertAllData.sort((a, b) => new Date(String(a.alert_time)).getTime() - new Date(String(b.alert_time)).getTime())
         // Map ค่า alert_time เข้าไปให้โดยค่าเดิมจะเป็นเวลา UTC ทำการ Map ใหม่โดยเเปลงเป็น UTC+7
@@ -76,7 +77,9 @@ async function AlertBoxCheckController(req, res){
             const dateInUTC7 = utcDate.toLocaleString('en-US', options).replace(', ', 'T');
             const [datePart, timePart] = dateInUTC7.split('T');
             const splitDatePart = datePart.split("/");
-            const makeLikeISOStringFormatInUTC7 = `${splitDatePart[2]}-${splitDatePart[0].length === 1 ? `0${splitDatePart[0]}` : splitDatePart[0]}-${splitDatePart[1]}T${timePart}.000+07:00`;
+            const splitTimePart = timePart.split(":");
+            const makeLikeISOStringFormatInUTC7 = `${splitDatePart[2]}-${splitDatePart[0].length === 1 ? `0${splitDatePart[0]}` : splitDatePart[0]}-${splitDatePart[1].length === 1 ? `0${splitDatePart[1]}` : splitDatePart[1]}T${splitTimePart[0].length === 1 ? `0${splitTimePart[0]}` : splitTimePart[0]}:${splitTimePart[1]}:${splitTimePart[2]}.000+07:00`;
+            // console.log(makeLikeISOStringFormatInUTC7)
             return {
                 id: timeData.id,
                 alert_time: makeLikeISOStringFormatInUTC7,
@@ -84,7 +87,9 @@ async function AlertBoxCheckController(req, res){
                 utc: makeLikeISOStringFormatInUTC7.match(/([+-]\d{2}:\d{2})$/)[0]
             }
         });
-        // ทำการ Filter เอาเฉพาะวันที่ Client กำลังทำงานเท่านั้น
+        // // ทำการ Filter เอาเฉพาะวันที่ Client กำลังทำงานเท่านั้น
+        // console.log(mapUTC7[18].alert_time);
+        // console.log(convertCurrentTimeToISOString)
         const filterOnlyInThisDay = mapUTC7.filter(alert => (alert.alert_time).split("T")[0] == convertCurrentTimeToISOString.split("T")[0]);
 
 
