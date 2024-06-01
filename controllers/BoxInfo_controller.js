@@ -8,8 +8,9 @@ const { verifyJwt } = require("../utils/verifyJwt");
 const { convertDateObjToISOString } = require("../utils/convertDateObjToISOString");
 const { isValidDate } = require("../utils/isValidDate");
 
-async function BoxListController(req, res){
+async function BoxInfoController(req, res){
     const { token } = req.cookies ?? {};
+    const { boxUUID } = req.body ?? {};
     
     if(!token){
         return res.json({
@@ -17,6 +18,14 @@ async function BoxListController(req, res){
             message: "Require token",
             error: {},
         });  
+    }
+
+    if(!boxUUID){
+        return res.json({
+            status: "FAIL",
+            message: "Require Box UUID",
+            error: {},
+        }); 
     }
 
     // parseJwtToRealData
@@ -31,6 +40,7 @@ async function BoxListController(req, res){
 
     // verify user token
     try {
+        // check user uuid
         const getUserData = await prisma.user.findUnique({
             where: {
                 user_uuid: getTokenFronJwt.uuid
@@ -48,24 +58,33 @@ async function BoxListController(req, res){
             });
         }
 
-        // get box list
-        const findBoxData = await prisma.registeredBox.findMany({
+        const findBoxInfo = await prisma.registeredBox.findUnique({
             where: {
+                box_uuid: boxUUID,
                 user_uuid: getUserData.user_uuid,
-                is_disabled: false
             },
             select: {
                 id: true,
-                box_uuid: true,
                 box_name: true,
+                box_uuid: true,
+                create_at: true,
+                update_at: true,
             }
         });
 
+        if(!findBoxInfo){
+            return res.json({
+                status: "FAIL",
+                message: "Box not found",
+                error: {}
+            });
+        }
+
         return res.json({
             status: "OK",
-            message: "This is box list",
+            message: "Box data found",
             error: null,
-            data: findBoxData,
+            data: findBoxInfo
         });
     }
     catch(e) {
@@ -78,5 +97,5 @@ async function BoxListController(req, res){
 }
 
 module.exports = {
-    BoxListController
+    BoxInfoController
 }
