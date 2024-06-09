@@ -90,6 +90,7 @@ async function BoxTodayAlertController(req, res){
                 alert_name: true,
                 alert_time: true,
                 alert_slot: true,
+                box_uuid: true
             }
         });
 
@@ -106,7 +107,8 @@ async function BoxTodayAlertController(req, res){
                 id: timeData.id,
                 alert_time: makeLikeISOStringFormatInUTC7,
                 alert_name: timeData.alert_name,
-                alert_slot: timeData.alert_slot
+                alert_slot: timeData.alert_slot,
+                box_uuid: timeData.box_uuid,
             }
         });
         
