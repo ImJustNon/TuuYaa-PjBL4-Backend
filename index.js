@@ -21,10 +21,19 @@ const jsonEncoded = express.json({
     limit: "50mb",
 });
 
-app.use(cors({
-    origin: 'http://127.0.0.1:2567', 
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        if (config.allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not ' +
+                'allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
     credentials: true,
-}));
+}
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(urlEncoded);

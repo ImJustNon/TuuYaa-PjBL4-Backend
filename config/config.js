@@ -13,5 +13,6 @@ module.exports = {
                 callback_url: process.env.GOOGLE_CALLBACK_URL
             }
         }
-    }
+    },
+    allowedOrigins: ["http://127.0.0.1:2567", "https://mc2.it-project.site"],
 }
