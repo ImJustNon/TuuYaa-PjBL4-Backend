@@ -21,7 +21,10 @@ const jsonEncoded = express.json({
     limit: "50mb",
 });
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://127.0.0.1:2567', 
+    credentials: true,
+}));
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(urlEncoded);

@@ -20,9 +20,9 @@ async function UserGoogleAuthController(req, res){
 }
 
 async function UserGoogleAuthCallbackController(req, res){
-    const { code }  = req.query ?? {};
+    const { accessToken }  = req.body ?? {};
 
-    if(!code){
+    if(!accessToken){
         return res.json({
             status: "FAIL",
             message: "code param not found"
@@ -30,13 +30,13 @@ async function UserGoogleAuthCallbackController(req, res){
     }
 
     try {
-        const response = await axios.post('https://oauth2.googleapis.com/token', `code=${code}&client_id=${config.api.google.auth.client_id}&client_secret=${config.api.google.auth.client_secret}&redirect_uri=${config.api.google.auth.callback_url}&grant_type=authorization_code`, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        });
+        // const response = await axios.post('https://oauth2.googleapis.com/token', `code=${code}&client_id=${config.api.google.auth.client_id}&client_secret=${config.api.google.auth.client_secret}&redirect_uri=${config.api.google.auth.callback_url}&grant_type=authorization_code`, {
+        //     headers: {
+        //         'Content-Type': 'application/x-www-form-urlencoded'
+        //     }
+        // });
         
-        const accessToken = response.data.access_token;
+        // const accessToken = response.data.access_token;
         
         const userResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
             headers: {

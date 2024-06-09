@@ -9,6 +9,6 @@ const urlEncoded = bodyparser.urlencoded({
 
 
 router.get("/v1/user/auth/google/auth", urlEncoded, UserGoogleAuthController);
-router.get("/v1/user/auth/google/auth/callback", urlEncoded, UserGoogleAuthCallbackController);
+router.post("/v1/user/auth/google/auth/callback", urlEncoded, UserGoogleAuthCallbackController);
 
 module.exports = router;
