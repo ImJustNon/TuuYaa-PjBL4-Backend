@@ -82,7 +82,9 @@ async function UserGoogleAuthCallbackController(req, res){
                 maxAge: (5 * 60) * 1000, // 5 min
                 secure: true, 
                 httpOnly: false,
-                sameSite: "none"
+                sameSite: "none",
+                path: '/',
+                domain: 'mc2.it-project.site'
             });
             res.json({
                 status: "OK",
