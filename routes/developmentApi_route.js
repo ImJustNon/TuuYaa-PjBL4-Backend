@@ -44,7 +44,7 @@ router.post("/v1/dev/user/settoken", urlEncoded, async(req, res) =>{
         res.cookie("token", createJwtToken, {
             maxAge: (10 * 60) * 1000, // 5 min
             secure: true, 
-            httpOnly: true,
+            httpOnly: false,
             sameSite: "none"
         });
         
