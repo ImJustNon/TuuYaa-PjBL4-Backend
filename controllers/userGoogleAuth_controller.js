@@ -83,7 +83,6 @@ async function UserGoogleAuthCallbackController(req, res){
                 secure: true, 
                 httpOnly: false,
                 sameSite: "none",
-                path: '/',
             });
             res.json({
                 status: "OK",
@@ -101,7 +100,6 @@ async function UserGoogleAuthCallbackController(req, res){
                 secure: true, 
                 httpOnly: false,
                 sameSite: "none",
-                path: '/',
             });
             res.json({
                 status: "OK",
