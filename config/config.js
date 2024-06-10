@@ -14,5 +14,5 @@ module.exports = {
             }
         }
     },
-    allowedOrigins: ["http://127.0.0.1:2567", "https://mc2.it-project.site"],
+    allowedOrigins: ["http://127.0.0.1:2567", "https://mc2.it-project.site", "https://b3f8-49-237-14-153.ngrok-free.app", "https://tuuyaa-pjbl4-frontend.netlify.app"],
 }
