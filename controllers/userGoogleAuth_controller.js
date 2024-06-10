@@ -84,7 +84,6 @@ async function UserGoogleAuthCallbackController(req, res){
                 httpOnly: false,
                 sameSite: "none",
                 path: '/',
-                domain: 'mc2.it-project.site'
             });
             res.json({
                 status: "OK",
@@ -103,7 +102,6 @@ async function UserGoogleAuthCallbackController(req, res){
                 httpOnly: false,
                 sameSite: "none",
                 path: '/',
-                domain: 'mc2.it-project.site'
             });
             res.json({
                 status: "OK",
