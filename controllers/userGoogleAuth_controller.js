@@ -80,9 +80,9 @@ async function UserGoogleAuthCallbackController(req, res){
             // save cookie and response
             res.cookie("token", createJwtToken, {
                 maxAge: (5 * 60) * 1000, // 5 min
-                // secure: false, 
-                // httpOnly: false,
-                // sameSite: "none"
+                secure: true, 
+                httpOnly: false,
+                sameSite: "none"
             });
             res.json({
                 status: "OK",
@@ -97,9 +97,9 @@ async function UserGoogleAuthCallbackController(req, res){
             // save cookie and response
             res.cookie("token", createJwtToken, {
                 maxAge: (5 * 60) * 1000, // 5 min
-                // secure: false, 
-                // httpOnly: false,
-                // sameSite: "none"
+                secure: true, 
+                httpOnly: false,
+                sameSite: "none"
             });
             res.json({
                 status: "OK",
