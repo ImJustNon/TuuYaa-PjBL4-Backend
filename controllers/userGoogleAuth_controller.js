@@ -82,7 +82,7 @@ async function UserGoogleAuthCallbackController(req, res){
                 maxAge: (5 * 60) * 1000, // 5 min
                 secure: true, 
                 httpOnly: false,
-                sameSite: "none"
+                sameSite: "lax"
             });
             res.json({
                 status: "OK",
@@ -99,7 +99,7 @@ async function UserGoogleAuthCallbackController(req, res){
                 maxAge: (5 * 60) * 1000, // 5 min
                 secure: true, 
                 httpOnly: false,
-                sameSite: "none"
+                sameSite: "lax"
             });
             res.json({
                 status: "OK",
