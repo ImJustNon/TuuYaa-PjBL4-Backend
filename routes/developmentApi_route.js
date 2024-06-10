@@ -42,12 +42,11 @@ router.post("/v1/dev/user/settoken", urlEncoded, async(req, res) =>{
         });
 
         res.cookie("token", createJwtToken, {
-            maxAge: (10 * 60) * 1000, // 5 min
+            maxAge: (10 * 60) * 1000, // 10 min
             secure: true, 
             httpOnly: false,
             sameSite: "none"
         });
-        
         res.json({
             status: "OK",
             message: "Set token success",
