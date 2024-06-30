@@ -20,7 +20,7 @@ router.post("/v1/box/register", urlEncoded, BoxRegisterController);
 router.post("/v1/box/todayalert", urlEncoded, BoxTodayAlertController);
 router.post("/v1/box/deepinfo", urlEncoded, BoxDeepInfoController);
 router.post("/v1/box/delete", urlEncoded, BoxDeleteController);
-router.post("/v1/box/delete", urlEncoded, BoxRenameController);
+router.post("/v1/box/rename", urlEncoded, BoxRenameController);
 
 
 module.exports = router;
