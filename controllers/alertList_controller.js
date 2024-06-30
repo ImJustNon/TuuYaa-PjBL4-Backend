@@ -31,6 +31,24 @@ async function AlertListController(req, res){
     }
 
     try {
+        // verify user token
+        const getUserData = await prisma.user.findUnique({
+            where: {
+                user_uuid: getTokenFromJwt.uuid
+            },
+            select: {
+                user_uuid: true,
+            }
+        });
+
+        if(!getUserData){
+            return res.json({
+                status: "FAIL",
+                message: "User not found",
+                error: {},
+            });
+        }
+
         const findAlertDatas = await prisma.alertData.findMany({
             where: {
                 user_uuid: getTokenFromJwt.uuid,
