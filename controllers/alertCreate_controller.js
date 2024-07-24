@@ -9,7 +9,7 @@ const { convertDateObjToISOString } = require("../utils/convertDateObjToISOStrin
 const { isValidDate } = require("../utils/isValidDate");
 
 async function AlertCreateController(req, res){
-    const { alertTime, boxUUID, alertSlot, alertName } = req.body ?? {}
+    const { alertTime, boxUUID, alertSlot, alertName, meal } = req.body ?? {}
     const { token } = req.cookies ?? {};
     
     if(!token){
@@ -20,7 +20,7 @@ async function AlertCreateController(req, res){
         });  
     }
 
-    if(!alertTime || !boxUUID || !alertSlot || !alertName){
+    if(!alertTime || !boxUUID || !alertSlot || !alertName || !meal){
         return res.json({
             status: "FAIL",
             message: "Missing data fields alertTime, boxUUID, alertSlot, alertName",
@@ -28,7 +28,7 @@ async function AlertCreateController(req, res){
         });
     }
 
-    // validate date for correnting form
+    // validate date for correcting form
     const [validateDate, validateDateError] = isValidDate(alertTime);
     if(!validateDate){
         return res.json({
@@ -106,6 +106,7 @@ async function AlertCreateController(req, res){
                 alert_slot: createSlotSet,
                 user_uuid: getUserData.user_uuid,
                 box_uuid: getBoxData.box_uuid,
+                meal: meal
             },
             select: {
                 alert_uuid: true,

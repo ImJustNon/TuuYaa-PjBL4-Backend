@@ -87,6 +87,7 @@ model AlertData {
     alert_slot  Json?                                            //
     user_uuid   String                                           //
     box_uuid    String                                           //
+    meal        Json?                                            //
     create_at   DateTime    @default(now())
 	update_at   DateTime    @updatedAt
     is_disabled Boolean     @default(false)
