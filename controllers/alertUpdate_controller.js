@@ -81,7 +81,21 @@ async function AlertUpdateController(req, res){
                     user_uuid: findUserInfo.user_uuid
                 },
                 data: {
-                    alert_slot: [...new Set(data)]
+                    // alert_slot: [...new Set(data)]
+                    alert_slot: data
+                }
+            }
+        }
+        else if(update.toLowerCase() === "alertmeal"){
+            updateSchema = {
+                where: {
+                    alert_uuid: alertUUID,
+                    box_uuid: boxUUID,
+                    user_uuid: findUserInfo.user_uuid
+                },
+                data: {
+                    // alert_slot: [...new Set(data)]
+                    meal: data
                 }
             }
         }
